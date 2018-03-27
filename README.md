@@ -1,7 +1,8 @@
 # cppdepsystem
-This is my small repository for managing cpp dependencies. This is work in progress
 
+This is my small repository for managing cpp dependencies. This is work in progress. If you wish to contribute, then feel free to open pull request. I cannot promis that this will be resolved quickly (my other projects).
 
+Currently tere are mosly my own dependencies and projects, some of them are currently closed source (sorry), but the engine for cpp dependency management is here for free.
 
 ## cmake configuration
 
