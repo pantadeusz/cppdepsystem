@@ -1,34 +1,39 @@
 {
-   "packages":[
-      {
-         "name":"tpcommon",
-         "version":"",
-         "repo":"git",
-         "url":"https://pantadeusz@github.com/pantadeusz/tpcommon"
-      },
-      {
-         "name":"togcode",
-         "version":"",
-         "repo":"hg",
-         "url":"ssh://t4deusz@bitbucket.org/labrzeczy/togcode"
-      },
-      {
-        "name":"raspigcd",
-        "version":"",
-        "repo":"hg",
-        "url":"ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
-     },
-      {
-         "name":"catch",
-         "version":"1.10",
-         "repo":"wget",
-         "url":"http://puzniakowski.pl/repo/libs/thirdparty/catch/catch-1.10.tar.bz2"
-      },
-      {
-         "name":"fakeit",
-         "version":"2017.05.07",
-         "repo":"wget",
-         "url":"http://puzniakowski.pl/repo/libs/thirdparty/fakeit/fakeit-2017.05.07.tar.bz2"
-      }
-   ]
+    "packages": [{
+            "name": "tpcommon",
+            "version": "",
+            "repo": "git",
+            "url": "https://pantadeusz@github.com/pantadeusz/tpcommon"
+        },
+        {
+            "name": "togcode",
+            "version": "",
+            "repo": "hg",
+            "url": "ssh://t4deusz@bitbucket.org/labrzeczy/togcode"
+        },
+        {
+            "name": "raspigcd",
+            "version": "",
+            "repo": "hg",
+            "url": "ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
+        },
+        {
+            "name": "mhttp",
+            "version": "",
+            "repo": "git",
+            "url": "https://github.com/pantadeusz/mhttp"
+        },
+        {
+            "name": "catch",
+            "version": "1.10",
+            "repo": "wget",
+            "url": "http://puzniakowski.pl/repo/libs/thirdparty/catch/catch-1.10.tar.bz2"
+        },
+        {
+            "name": "fakeit",
+            "version": "2017.05.07",
+            "repo": "wget",
+            "url": "http://puzniakowski.pl/repo/libs/thirdparty/fakeit/fakeit-2017.05.07.tar.bz2"
+        }
+    ]
 }
