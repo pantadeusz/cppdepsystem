@@ -138,11 +138,11 @@ if (process.argv[3] === '--cmake') {
                   }
                   // katalog docelowy dla builda
                   try {
-                    fs.readlinkSync(`${process.argv[3]}/${e.name}`);
+                    fs.readlinkSync(`${process.argv[2]}/${e.name}`);
                   } catch (exc) {
-                    execSync(`mkdir -p ${process.argv[3]}`);
+                    execSync(`mkdir -p ${process.argv[2]}`);
                     execSync(
-                        `ln -s ${commonActions.libdir(e)} ${process.argv[3]}/${e.name}`);
+                        `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
                   }
                 }
               });
