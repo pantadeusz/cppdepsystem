@@ -133,13 +133,16 @@ add_custom_target(
 `);
 } else if (process.argv[2] === '--list') {
   getRepositoriesList(function(reposJson) {
+    let retStr = "";
+
     reposJson.packages.forEach(function(e) {
       dependencyList.forEach(function(dependency) {
         if ((dependency.name === e.name) && (dependency.version == e.version)) {
-          console.log(dependency.name);
+          retStr = retStr + " " + dependency.name;
         }
       });
     });
+    console.log(retStr);
   });
 } else {
   getRepositoriesList(function(reposJson) {
