@@ -1,4 +1,4 @@
-const {execSync} = require('child_process');
+const cp = require('child_process');
 var fs = require('fs');
 const os = require('os');
 const crypto = require('crypto');
@@ -6,7 +6,7 @@ const https = require('https');
 
 
 
-execSync(`mkdir -p ${os.homedir()}/.cppdep/__builds__`);
+cp.execSync(`mkdir -p ${os.homedir()}/.cppdep/__builds__`);
 
 let commonActions = {
   "libdir": function(e) { return `${os.homedir()}/.cppdep/${e.name}_${e.version}`; },
@@ -16,7 +16,7 @@ let commonActions = {
   "rebuild": function(e) {
     let rebuildCommand =
         `cd ${commonActions.builddir(e)}; mkdir -p build; cd build; cmake -DCMAKE_INSTALL_PREFIX:PATH=${commonActions.libdir(e)} .. && make all install`;
-    execSync(rebuildCommand);
+    cp.execSync(rebuildCommand);
     commonActions.errorlog(`built ${e.name} in ${commonActions.libdir(e)}`);
   },
   "errorlog": function(msg, err, stdout, stderr) {
@@ -35,7 +35,7 @@ let engines = {
       let cloneCommand =
           `${e.repo} clone ${e.url} ${commonActions.builddir(e)}`;
       try {
-        let result = execSync(cloneCommand);
+        let result = cp.execSync(cloneCommand);
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
@@ -44,7 +44,7 @@ let engines = {
     "update": function(e) {
       let updateCommand = `cd ${commonActions.builddir(e)}; ${e.repo} pull -u`;
       try {
-        execSync(updateCommand);
+        cp.execSync(updateCommand);
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
@@ -54,7 +54,7 @@ let engines = {
   "git": {
     "clone": function(e) {
       try {
-        execSync(`${e.repo} clone ${e.url} ${commonActions.builddir(e)}; `);
+        cp.execSync(`${e.repo} clone ${e.url} ${commonActions.builddir(e)}; `);
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
@@ -62,7 +62,7 @@ let engines = {
     },
 
     "update": function(e) {
-      execSync(`cd ${commonActions.builddir(e)}; git pull`);
+      cp.execSync(`cd ${commonActions.builddir(e)}; git pull`);
       try {
         commonActions.rebuild(e);
       } catch (err) {
@@ -73,9 +73,9 @@ let engines = {
   "wget": {
     "clone": function(e) {
       try {
-        execSync(
+        cp.execSync(
             `mkdir -p ${commonActions.builddir(e)} && wget -O ${commonActions.builddir(e)}/${e.name}.tar.bz2 ${e.url}`);
-        execSync(
+        cp.execSync(
             `mkdir -p ${commonActions.libdir(e)} && cd ${commonActions.libdir(e)} && tar -xvf ${commonActions.builddir(e)}/${e.name}.tar.bz2`);
         commonActions.errorlog(
             `unpacked ${e.name} in ${commonActions.libdir(e)}`);
@@ -150,7 +150,7 @@ add_custom_target( cppdeps
             `the getdep process already running!!: /tmp/getdep.${lockdigest}.lock`);
       } else {
         console.log("started job for " + lockdigest);
-        execSync(`touch /tmp/getdep.${lockdigest}.lock`);
+        cp.execSync(`touch /tmp/getdep.${lockdigest}.lock`);
         // JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
         reposJson.packages.forEach(function(e) {
           dependencyList.forEach(function(dependency) {
@@ -168,16 +168,16 @@ add_custom_target( cppdeps
                 fs.readlinkSync(`${process.argv[2]}/${e.name}`);
               } catch (exc) {
                 console.log(`mkdir -p ${process.argv[2]}`);
-                execSync(`mkdir -p ${process.argv[2]}`);
+                cp.execSync(`mkdir -p ${process.argv[2]}`);
                 console.log(
                     `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
-                execSync(
+                cp.execSync(
                     `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
               }
             }
           });
         });
-        execSync(`rm -f /tmp/getdep.${lockdigest}.lock`);
+        cp.execSync(`rm -f /tmp/getdep.${lockdigest}.lock`);
       }
       console.log("finished building deps");
     }
