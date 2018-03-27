@@ -95,25 +95,52 @@ let dependencyList =
     JSON.parse(fs.readFileSync(process.argv[1] + "on", 'utf8')).depends;
 
 let getRepositoriesList = function(callback) {
-  https.get('https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/cpprepository.json', function(res) {
-        var body = '';
-        res.on('data', function(chunk) { body += chunk; });
-        res.on('end', function() { callback(JSON.parse(body)); });
-      }).on('error', function(e) { callback(undefined); });
+  https
+      .get(
+          'https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/cpprepository.json',
+          function(res) {
+            var body = '';
+            res.on('data', function(chunk) { body += chunk; });
+            res.on('end', function() { callback(JSON.parse(body)); });
+          })
+      .on('error', function(e) { callback(undefined); });
 };
 
-if (process.argv[3] === '--cmake') {
-  // JSON.parse(fs.readFileSync(process.argv[2],
-  // 'utf8')).packages.forEach(function(e) {
-  //  dependencyList.forEach(function(dependency) {
-  //    if ((dependency.name === e.name) && (dependency.version == e.version)) {
-  //      console.log(
-  //          `include_directories("\${CMAKE_BINARY_DIR}/.cppdeps/${e.name}/include")`);
-  //      console.log(
-  //          `link_directories("\${CMAKE_BINARY_DIR}/.cppdeps/${e.name}/lib")`);
-  //    }
-  //  });
-  //});
+if (process.argv[2] === '--help') {
+  console.log(`getdeps for c++ by Tadeusz Puźniakowski
+  
+You can add to your cmake file the following text:
+  
+set(DEPSLIST tpcommon catch fakeit)
+foreach(dep \${DEPSLIST})
+    include_directories("\${CMAKE_BINARY_DIR}/.cppdeps/\${dep}/include")
+    link_directories("\${CMAKE_BINARY_DIR}/.cppdeps/\${dep}/lib")
+endforeach()
+
+add_custom_target(
+  getdeps.js
+  COMMAND wget -qO "\${CMAKE_BINARY_DIR}/getdeps.js" https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/getdeps.js
+)
+add_custom_target(
+  getdeps.json
+  COMMAND cp "\${PROJECT_SOURCE_DIR}/getdeps.json" "\${CMAKE_BINARY_DIR}/getdeps.json"
+)
+add_custom_target(
+    cppdeps
+    COMMAND node \${CMAKE_BINARY_DIR}/getdeps.js "\${CMAKE_BINARY_DIR}/.cppdeps" 
+    DEPENDS getdeps.js getdeps.json
+)
+`);
+} else if (process.argv[2] === '--list') {
+  getRepositoriesList(function(reposJson) {
+    reposJson.packages.forEach(function(e) {
+      dependencyList.forEach(function(dependency) {
+        if ((dependency.name === e.name) && (dependency.version == e.version)) {
+          console.log(dependency.name);
+        }
+      });
+    });
+  });
 } else {
   getRepositoriesList(function(reposJson) {
     if (reposJson) {
@@ -128,29 +155,30 @@ if (process.argv[3] === '--cmake') {
         execSync(`touch /tmp/getdep.${lockdigest}.lock`);
         // JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
         reposJson.packages.forEach(function(e) {
-              dependencyList.forEach(function(dependency) {
-                if ((dependency.name === e.name) &&
-                    (dependency.version == e.version)) {
-                  if (fs.existsSync(`${commonActions.builddir(e)}`)) {
-                    engines[e.repo].update(e);
-                  } else {
-                    engines[e.repo].clone(e);
-                  }
-                  // katalog docelowy dla builda
+          dependencyList.forEach(function(dependency) {
+            if ((dependency.name === e.name) &&
+                (dependency.version == e.version)) {
+              if (fs.existsSync(`${commonActions.builddir(e)}`)) {
+                engines[e.repo].update(e);
+              } else {
+                engines[e.repo].clone(e);
+              }
+              // katalog docelowy dla builda
 
-                  try {
-                    console.log(`${process.argv[2]}/${e.name}`);                    
-                    fs.readlinkSync(`${process.argv[2]}/${e.name}`);
-                  } catch (exc) {
-                    console.log(`mkdir -p ${process.argv[2]}`);
-                    execSync(`mkdir -p ${process.argv[2]}`);
-                    console.log(`ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
-                    execSync(
-                        `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
-                  }
-                }
-              });
-            });
+              try {
+                console.log(`${process.argv[2]}/${e.name}`);
+                fs.readlinkSync(`${process.argv[2]}/${e.name}`);
+              } catch (exc) {
+                console.log(`mkdir -p ${process.argv[2]}`);
+                execSync(`mkdir -p ${process.argv[2]}`);
+                console.log(
+                    `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+                execSync(
+                    `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+              }
+            }
+          });
+        });
         execSync(`rm -f /tmp/getdep.${lockdigest}.lock`);
       }
       console.log("finished building deps");
