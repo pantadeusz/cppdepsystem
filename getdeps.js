@@ -138,7 +138,8 @@ add_custom_target(
     reposJson.packages.forEach(function(e) {
       dependencyList.forEach(function(dependency) {
         if ((dependency.name === e.name) && (dependency.version == e.version)) {
-          retStr = retStr + " " + dependency.name;
+          if (retStr === "") {retStr = dependency.name;}
+          else {retStr = retStr + " " + dependency.name;}
         }
       });
     });
