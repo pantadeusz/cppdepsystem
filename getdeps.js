@@ -2,7 +2,7 @@ const {execSync} = require('child_process');
 var fs = require('fs');
 const os = require('os');
 const crypto = require('crypto');
-const http = require('http');
+const https = require('https');
 
 
 
@@ -95,7 +95,7 @@ let dependencyList =
     JSON.parse(fs.readFileSync(process.argv[1] + "on", 'utf8')).depends;
 
 let getRepositoriesList = function(callback) {
-  http.get('http://puzniakowski.pl/repo/cppdeps.json', function(res) {
+  https.get('https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/cpprepository.json', function(res) {
         var body = '';
         res.on('data', function(chunk) { body += chunk; });
         res.on('end', function() { callback(JSON.parse(body)); });
