@@ -137,10 +137,14 @@ if (process.argv[3] === '--cmake') {
                     engines[e.repo].clone(e);
                   }
                   // katalog docelowy dla builda
+
                   try {
+                    console.log(`${process.argv[2]}/${e.name}`);                    
                     fs.readlinkSync(`${process.argv[2]}/${e.name}`);
                   } catch (exc) {
+                    console.log(`mkdir -p ${process.argv[2]}`);
                     execSync(`mkdir -p ${process.argv[2]}`);
+                    console.log(`ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
                     execSync(
                         `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
                   }
