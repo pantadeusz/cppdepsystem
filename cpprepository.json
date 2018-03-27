@@ -13,6 +13,12 @@
          "url":"ssh://t4deusz@bitbucket.org/labrzeczy/togcode"
       },
       {
+        "name":"raspigcd",
+        "version":"",
+        "repo":"hg",
+        "url":"ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
+     },
+      {
          "name":"catch",
          "version":"1.10",
          "repo":"wget",
