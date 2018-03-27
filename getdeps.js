@@ -139,7 +139,7 @@ add_custom_target(
       dependencyList.forEach(function(dependency) {
         if ((dependency.name === e.name) && (dependency.version == e.version)) {
           if (retStr === "") {retStr = dependency.name;}
-          else {retStr = retStr + " " + dependency.name;}
+          else {retStr = retStr + ";" + dependency.name;}
         }
       });
     });
