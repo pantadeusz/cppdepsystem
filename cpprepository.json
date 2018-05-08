@@ -18,6 +18,12 @@
             "url": "ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
         },
         {
+            "name": "raspigcd",
+            "version": "170",
+            "repo": "hg",
+            "url": "ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
+        },
+        {
             "name": "mhttp",
             "version": "",
             "repo": "git",

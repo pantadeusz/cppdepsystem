@@ -36,6 +36,9 @@ let engines = {
           `${e.repo} clone ${e.url} ${commonActions.builddir(e)}`;
       try {
         let result = cp.execSync(cloneCommand);
+        if (e.version !== "") {
+          cp.execSync(`${e.repo} up ${e.version}`);
+        }
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
@@ -45,6 +48,9 @@ let engines = {
       let updateCommand = `cd ${commonActions.builddir(e)}; ${e.repo} pull -u`;
       try {
         cp.execSync(updateCommand);
+        if (e.version !== "") {
+          cp.execSync(`${e.repo} up ${e.version}`);
+        }
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
