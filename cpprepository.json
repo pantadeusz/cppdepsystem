@@ -40,6 +40,12 @@
             "version": "2017.05.07",
             "repo": "wget",
             "url": "http://puzniakowski.pl/repo/libs/thirdparty/fakeit/fakeit-2017.05.07.tar.bz2"
+        },
+        {
+            "name": "nlohmann_json",
+            "version": "3.1.2",
+            "repo": "wget",
+            "url": "http://puzniakowski.pl/repo/libs/thirdparty/nlohmann_json/nlohmann_json-3.1.2.tar.bz2"
         }
     ]
 }
