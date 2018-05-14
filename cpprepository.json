@@ -19,9 +19,9 @@
         },
         {
             "name": "raspigcd",
-            "version": "170",
-            "repo": "hg",
-            "url": "ssh://t4deusz@bitbucket.org/labrzeczy/raspigcd"
+            "version": "",
+            "repo": "git",
+            "url": "https://github.com/pantadeusz/raspigcd"
         },
         {
             "name": "mhttp",
