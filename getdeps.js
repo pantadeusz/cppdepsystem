@@ -63,6 +63,8 @@ let engines = {
         cp.execSync(`${e.repo} clone ${e.url} ${commonActions.builddir(e)}; `);
         if (e.version !== "") {
           cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
+        } else {
+          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout master`);
         }
         commonActions.rebuild(e);
       } catch (err) {
@@ -71,15 +73,15 @@ let engines = {
     },
 
     "update": function (e) {
-      cp.execSync(`cd ${commonActions.builddir(e)}; git pull`);
-      try {
-        commonActions.rebuild(e);
-        if (e.version !== "") {
-          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
-        }
-      } catch (err) {
-        commonActions.errorlog(`update ${e.name}`, err);
-      }
+      //let ver = e.version;
+      //if (ver === "") {ver = "master";}
+      ////cp.execSync(`cd ${commonActions.builddir(e)}; git pull`);// ${ver}`);
+      //try {
+      //  commonActions.rebuild(e);
+      //  cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${ver}`);
+      //} catch (err) {
+      //  commonActions.errorlog(`update ${e.name}`, err);
+      //}
     }
   },
   "wget": {
