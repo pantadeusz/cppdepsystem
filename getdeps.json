@@ -1,6 +1,6 @@
 {
     "depends":[
-        {"name":"tpcommon", "version":"v0.0.1"},
+        {"name":"tpcommon", "version":""},
         {"name":"catch", "version":"1.10"},
         {"name":"fakeit","version":"2017.05.07"}
     ]

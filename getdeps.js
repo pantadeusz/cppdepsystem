@@ -62,7 +62,7 @@ let engines = {
       try {
         cp.execSync(`${e.repo} clone ${e.url} ${commonActions.builddir(e)}; `);
         if (e.version !== "") {
-          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
+          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout tags/${e.version}`);
         }
         commonActions.rebuild(e);
       } catch (err) {
@@ -71,12 +71,14 @@ let engines = {
     },
 
     "update": function (e) {
-      cp.execSync(`cd ${commonActions.builddir(e)}; git pull`);
+      cp.execSync(`cd ${commonActions.builddir(e)}; git fetch`);
       try {
-        commonActions.rebuild(e);
         if (e.version !== "") {
-          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
+          cp.execSync(`cd ${commonActions.builddir(e)};git merge; git checkout tags/${e.version}`);
+        } else {
+          cp.execSync(`cd ${commonActions.builddir(e)};git merge; git checkout master`);
         }
+        commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`update ${e.name}`, err);
       }
@@ -179,15 +181,15 @@ add_custom_target( cppdeps
               // katalog docelowy dla builda
 
               try {
-                console.log(`${process.argv[2]}/${e.name}`);
-                fs.readlinkSync(`${process.argv[2]}/${e.name}`);
+                console.log(`${process.argv[2]}/${toget.name}`);
+                fs.readlinkSync(`${process.argv[2]}/${toget.name}`);
               } catch (exc) {
                 console.log(`mkdir -p ${process.argv[2]}`);
                 cp.execSync(`mkdir -p ${process.argv[2]}`);
                 console.log(
-                  `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+                  `ln -s ${commonActions.libdir(toget)} ${process.argv[2]}/${toget.name}`);
                 cp.execSync(
-                  `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+                  `ln -s ${commonActions.libdir(toget)} ${process.argv[2]}/${toget.name}`);
               }
             }
           });
