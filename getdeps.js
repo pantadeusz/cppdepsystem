@@ -9,17 +9,17 @@ const https = require('https');
 cp.execSync(`mkdir -p ${os.homedir()}/.cppdep/__builds__`);
 
 let commonActions = {
-  "libdir": function(e) { return `${os.homedir()}/.cppdep/${e.name}_${e.version}`; },
-  "builddir": function(e) {
+  "libdir": function (e) { return `${os.homedir()}/.cppdep/${e.name}_${e.version}`; },
+  "builddir": function (e) {
     return `${os.homedir()}/.cppdep/__builds__/${e.name}_${e.version}`;
   },
-  "rebuild": function(e) {
+  "rebuild": function (e) {
     let rebuildCommand =
-        `cd ${commonActions.builddir(e)}; mkdir -p build; cd build; cmake -DCMAKE_INSTALL_PREFIX:PATH=${commonActions.libdir(e)} .. && make all install`;
+      `cd ${commonActions.builddir(e)}; mkdir -p build; cd build; cmake -DCMAKE_INSTALL_PREFIX:PATH=${commonActions.libdir(e)} .. && make all install`;
     cp.execSync(rebuildCommand);
     commonActions.errorlog(`built ${e.name} in ${commonActions.libdir(e)}`);
   },
-  "errorlog": function(msg, err, stdout, stderr) {
+  "errorlog": function (msg, err, stdout, stderr) {
     if (err) {
       console.log(`stdout(${msg}): ${stdout}`);
       console.log(`stderr(${msg}): ${stderr}`);
@@ -31,9 +31,9 @@ let commonActions = {
 
 let engines = {
   "hg": {
-    "clone": function(e) {
+    "clone": function (e) {
       let cloneCommand =
-          `${e.repo} clone ${e.url} ${commonActions.builddir(e)}`;
+        `${e.repo} clone ${e.url} ${commonActions.builddir(e)}`;
       try {
         let result = cp.execSync(cloneCommand);
         if (e.version !== "") {
@@ -44,7 +44,7 @@ let engines = {
         commonActions.errorlog(`clone ${e.name}`, err);
       }
     },
-    "update": function(e) {
+    "update": function (e) {
       let updateCommand = `cd ${commonActions.builddir(e)}; ${e.repo} pull -u`;
       try {
         cp.execSync(updateCommand);
@@ -58,58 +58,64 @@ let engines = {
     }
   },
   "git": {
-    "clone": function(e) {
+    "clone": function (e) {
       try {
         cp.execSync(`${e.repo} clone ${e.url} ${commonActions.builddir(e)}; `);
+        if (e.version !== "") {
+          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
+        }
         commonActions.rebuild(e);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
       }
     },
 
-    "update": function(e) {
+    "update": function (e) {
       cp.execSync(`cd ${commonActions.builddir(e)}; git pull`);
       try {
         commonActions.rebuild(e);
+        if (e.version !== "") {
+          cp.execSync(`cd ${commonActions.builddir(e)};${e.repo} checkout ${e.version}`);
+        }
       } catch (err) {
         commonActions.errorlog(`update ${e.name}`, err);
       }
     }
   },
   "wget": {
-    "clone": function(e) {
+    "clone": function (e) {
       try {
         cp.execSync(
-            `mkdir -p ${commonActions.builddir(e)} && wget -O ${commonActions.builddir(e)}/${e.name}.tar.bz2 ${e.url}`);
+          `mkdir -p ${commonActions.builddir(e)} && wget -O ${commonActions.builddir(e)}/${e.name}.tar.bz2 ${e.url}`);
         cp.execSync(
-            `mkdir -p ${commonActions.libdir(e)} && cd ${commonActions.libdir(e)} && tar -xvf ${commonActions.builddir(e)}/${e.name}.tar.bz2`);
+          `mkdir -p ${commonActions.libdir(e)} && cd ${commonActions.libdir(e)} && tar -xvf ${commonActions.builddir(e)}/${e.name}.tar.bz2`);
         commonActions.errorlog(
-            `unpacked ${e.name} in ${commonActions.libdir(e)}`);
+          `unpacked ${e.name} in ${commonActions.libdir(e)}`);
       } catch (err) {
         commonActions.errorlog(`clone ${e.name}`, err);
       }
     },
-    "update": function(e) {
+    "update": function (e) {
       commonActions.errorlog(
-          `update ${e.name} - it was already downloaded - doing nothing`);
+        `update ${e.name} - it was already downloaded - doing nothing`);
     }
   }
 };
 
 
 let dependencyList =
-    JSON.parse(fs.readFileSync(process.argv[1] + "on", 'utf8')).depends;
+  JSON.parse(fs.readFileSync(process.argv[1] + "on", 'utf8')).depends;
 
-let getRepositoriesList = function(callback) {
+let getRepositoriesList = function (callback) {
   https
-      .get(
-          'https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/cpprepository.json',
-          function(res) {
-            var body = '';
-            res.on('data', function(chunk) { body += chunk; });
-            res.on('end', function() { callback(JSON.parse(body)); });
-          })
-      .on('error', function(e) { callback(undefined); });
+    .get(
+      'https://raw.githubusercontent.com/pantadeusz/cppdepsystem/master/cpprepository.json',
+      function (res) {
+        var body = '';
+        res.on('data', function (chunk) { body += chunk; });
+        res.on('end', function () { callback(JSON.parse(body)); });
+      })
+    .on('error', function (e) { callback(undefined); });
 };
 
 if (process.argv[2] === '--help') {
@@ -132,40 +138,43 @@ add_custom_target( cppdeps
 )
 `);
 } else if (process.argv[2] === '--list') {
-  getRepositoriesList(function(reposJson) {
+  getRepositoriesList(function (reposJson) {
     let retStr = "";
 
-    reposJson.packages.forEach(function(e) {
-      dependencyList.forEach(function(dependency) {
+    reposJson.packages.forEach(function (e) {
+      dependencyList.forEach(function (dependency) {
         if ((dependency.name === e.name) && (dependency.version == e.version)) {
-          if (retStr === "") {retStr = dependency.name;}
-          else {retStr = retStr + ";" + dependency.name;}
+          if (retStr === "") { retStr = dependency.name; }
+          else { retStr = retStr + ";" + dependency.name; }
         }
       });
     });
     console.log(retStr);
   });
 } else {
-  getRepositoriesList(function(reposJson) {
+  getRepositoriesList(function (reposJson) {
     if (reposJson) {
       let lockdigest = crypto.createHash('md5')
-                           .update(process.argv[0] + ":" + process.argv[1])
-                           .digest("hex");
+        .update(process.argv[0] + ":" + process.argv[1])
+        .digest("hex");
       if (fs.existsSync(`/tmp/getdep.${lockdigest}.lock`)) {
         console.log(
-            `the getdep process already running!!: /tmp/getdep.${lockdigest}.lock`);
+          `the getdep process already running!!: /tmp/getdep.${lockdigest}.lock`);
       } else {
         console.log("started job for " + lockdigest);
         cp.execSync(`touch /tmp/getdep.${lockdigest}.lock`);
-        // JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-        reposJson.packages.forEach(function(e) {
-          dependencyList.forEach(function(dependency) {
+        reposJson.packages.forEach(function (e) {
+          dependencyList.forEach(function (dependency) {
             if ((dependency.name === e.name) &&
-                (dependency.version == e.version)) {
-              if (fs.existsSync(`${commonActions.builddir(e)}`)) {
-                engines[e.repo].update(e);
+              ((dependency.version === e.version) || (e.repo === 'git'))) {
+              let toget = JSON.parse(JSON.stringify(e));
+              toget.version = dependency.version;
+              if (fs.existsSync(`${commonActions.builddir(toget)}`)) {
+                console.log("update: " + toget.name + "  V: " + toget.version);
+                engines[e.repo].update(toget);
               } else {
-                engines[e.repo].clone(e);
+                console.log("update: " + toget.name + "  V: " + toget.version);
+                engines[e.repo].clone(toget);
               }
               // katalog docelowy dla builda
 
@@ -176,9 +185,9 @@ add_custom_target( cppdeps
                 console.log(`mkdir -p ${process.argv[2]}`);
                 cp.execSync(`mkdir -p ${process.argv[2]}`);
                 console.log(
-                    `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+                  `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
                 cp.execSync(
-                    `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
+                  `ln -s ${commonActions.libdir(e)} ${process.argv[2]}/${e.name}`);
               }
             }
           });
