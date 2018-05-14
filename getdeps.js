@@ -145,7 +145,8 @@ add_custom_target( cppdeps
 
     reposJson.packages.forEach(function (e) {
       dependencyList.forEach(function (dependency) {
-        if ((dependency.name === e.name) && (dependency.version == e.version)) {
+        if ((dependency.name === e.name) 
+          && ((dependency.version == e.version) || (e.repo === 'git'))) {
           if (retStr === "") { retStr = dependency.name; }
           else { retStr = retStr + ";" + dependency.name; }
         }
