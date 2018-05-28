@@ -36,6 +36,12 @@
             "url": "http://puzniakowski.pl/repo/libs/thirdparty/catch/catch-1.10.tar.bz2"
         },
         {
+            "name": "catch2",
+            "version": "2.2.2",
+            "repo": "wget",
+            "url": "http://puzniakowski.pl/repo/libs/thirdparty/catch/catch-2.2.2.tar.bz2"
+        },
+        {
             "name": "fakeit",
             "version": "2017.05.07",
             "repo": "wget",
